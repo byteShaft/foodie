@@ -6,7 +6,7 @@
     <Button
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:background="@drawable/upload"
+        android:src="@drawable/upload"
         android:id="@+id/upload"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
