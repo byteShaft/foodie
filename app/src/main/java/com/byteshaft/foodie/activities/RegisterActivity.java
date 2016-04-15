@@ -23,7 +23,6 @@ public class RegisterActivity  extends Activity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Helpers.isUserLoggedIn()) {
-            finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
         setContentView(R.layout.activity_register);
@@ -34,7 +33,6 @@ public class RegisterActivity  extends Activity implements View.OnClickListener 
         loginButton = (TextView) findViewById(R.id.login);
         registerButton.setOnClickListener(this);
         loginButton.setOnClickListener(this);
-
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
@@ -83,7 +84,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -93,18 +94,22 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                     Toast.makeText(getActivity().getApplicationContext(), "Permission denied!"
                             , Toast.LENGTH_LONG).show();
                 }
-                return;
-            }
+                break;
         }
     }
 
     private void openPictures() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(Intent.createChooser(intent,
-                "Select Picture"), SELECT_PICTURE);
+        if (Build.VERSION.SDK_INT <19){
+            Intent intent = new Intent();
+            intent.setType("image/jpeg");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "pictures"),SELECT_PICTURE);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/jpeg");
+            startActivityForResult(intent, SELECT_PICTURE);
+        }
     }
 
     @Override

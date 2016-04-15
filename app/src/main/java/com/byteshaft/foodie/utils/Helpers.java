@@ -19,7 +19,7 @@ public class Helpers {
     // get user login status and manipulate app functions by its returned boolean value
     public static boolean isUserLoggedIn() {
         SharedPreferences sharedPreferences = getPreferenceManager();
-        return sharedPreferences.getBoolean(AppGlobals.USER_LOGIN_KEY, false);
+        return sharedPreferences.getBoolean(AppGlobals.USER_LOGIN_KEY, true);
     }
 
     /**
