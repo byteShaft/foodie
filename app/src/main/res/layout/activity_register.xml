@@ -42,9 +42,6 @@
             android:textColor="@color/gray_800"
             android:textSize="14sp"
             android:inputType="textPersonName"
-            android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/username"
-            android:drawableStart="@drawable/username"
             android:drawablePadding="9dp"/>
 
         <EditText
@@ -60,9 +57,6 @@
             android:textColor="@color/gray_800"
             android:textSize="14sp"
             android:inputType="textEmailAddress"
-            android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/email"
-            android:drawableStart="@drawable/email"
             android:drawablePadding="9dp"/>
 
         <EditText
@@ -78,9 +72,6 @@
             android:textSize="14sp"
             android:singleLine="true"
             android:inputType="textPassword"
-            android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/password"
-            android:drawableStart="@drawable/password"
             android:drawablePadding="9dp"/>
 
         <TextView
@@ -99,7 +90,7 @@
             android:text="Register"
             android:background="@drawable/btn_bg"/>
 
-        <TextView
+        <Button
             android:id="@+id/login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
