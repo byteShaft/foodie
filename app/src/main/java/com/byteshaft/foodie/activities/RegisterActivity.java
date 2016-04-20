@@ -23,26 +23,25 @@ public class RegisterActivity  extends Activity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Helpers.isUserLoggedIn()) {
-            finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
         setContentView(R.layout.activity_register);
-        userNameEdittext = (EditText) findViewById(R.id.username);
-        emailEditText = (EditText) findViewById(R.id.email);
-        passwordEditText = (EditText) findViewById(R.id.password);
-        registerButton = (TextView) findViewById(R.id.register);
-        loginButton = (TextView) findViewById(R.id.login);
-        registerButton.setOnClickListener(this);
-        loginButton.setOnClickListener(this);
-
+//        userNameEdittext = (EditText) findViewById(R.id.username);
+//        emailEditText = (EditText) findViewById(R.id.email);
+//        passwordEditText = (EditText) findViewById(R.id.password);
+//        registerButton = (TextView) findViewById(R.id.register);
+//        loginButton = (TextView) findViewById(R.id.login);
+//        registerButton.setOnClickListener(this);
+//        loginButton.setOnClickListener(this);
+//
     }
-
+//
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.login:
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                break;
+//            case R.id.login:
+//                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+//                break;
         }
 
     }

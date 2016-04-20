@@ -3,6 +3,12 @@ package com.byteshaft.foodie.utils;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Helpers {
 
@@ -19,7 +25,7 @@ public class Helpers {
     // get user login status and manipulate app functions by its returned boolean value
     public static boolean isUserLoggedIn() {
         SharedPreferences sharedPreferences = getPreferenceManager();
-        return sharedPreferences.getBoolean(AppGlobals.USER_LOGIN_KEY, false);
+        return sharedPreferences.getBoolean(AppGlobals.USER_LOGIN_KEY, true);
     }
 
     /**
@@ -50,5 +56,26 @@ public class Helpers {
     public static String getStringDataFromSharedPreference(String key) {
         SharedPreferences sharedPreferences = getPreferenceManager();
         return sharedPreferences.getString(key, "");
+    }
+
+    public static void authPostRequest(String link, String key, String value) throws IOException {
+        URL url;
+        url = new URL(link);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestMethod("POST");
+        String jsonFormattedData = getJsonObjectString(key, value);
+        sendRequestData(connection, jsonFormattedData);
+    }
+
+    public static void sendRequestData(HttpURLConnection connection, String body) throws IOException {
+        byte[] outputInBytes = body.getBytes("UTF-8");
+        OutputStream os = connection.getOutputStream();
+        os.write(outputInBytes);
+        os.close();
+    }
+
+    private static String getJsonObjectString(String key, String pushKey) {
+        return String.format("{\"%s\": \"%s\"}", key, pushKey);
     }
 }
