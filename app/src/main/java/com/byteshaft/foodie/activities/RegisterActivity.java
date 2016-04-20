@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -38,9 +39,9 @@ public class RegisterActivity  extends Activity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-//            case R.id.login:
-//                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-//                break;
+            case R.id.login:
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                break;
         }
 
     }

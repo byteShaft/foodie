@@ -38,14 +38,15 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:padding="15dp"
-            android:hint="Email"
+            android:hint="username"
             android:singleLine="true"
             android:textColor="@color/gray_800"
             android:textSize="14sp"
+            android:textCursorDrawable="@null"
             android:inputType="textEmailAddress"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/email"
-            android:drawableStart="@drawable/email"
+            android:drawableLeft="@drawable/username"
+            android:drawableStart="@drawable/username"
             android:drawablePadding="9dp"/>
 
         <EditText
@@ -57,6 +58,7 @@
             android:layout_marginEnd="10dp"
             android:padding="15dp"
             android:hint="password"
+            android:textCursorDrawable="@null"
             android:textColor="@color/gray_800"
             android:textSize="14sp"
             android:singleLine="true"
@@ -80,7 +82,19 @@
             android:textStyle="bold"
             android:textSize="17sp"
             android:text="Login"
+            android:clickable="true"
             android:background="@drawable/btn_bg"/>
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:id="@+id/progress_bar"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            style="?android:attr/progressBarStyle"/>
 
     </LinearLayout>
 

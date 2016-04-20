@@ -1,5 +1,6 @@
 package com.byteshaft.foodie.activities;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,10 @@ import android.view.MenuItem;
 import com.byteshaft.foodie.R;
 import com.byteshaft.foodie.fragments.ImagesFragment;
 import com.byteshaft.foodie.fragments.UploadFragment;
+import com.byteshaft.foodie.utils.AppGlobals;
+import com.byteshaft.foodie.utils.Helpers;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

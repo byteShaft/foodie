@@ -20,10 +20,10 @@ public class ImagesFragment extends Fragment {
     private View mBaseView;
     private GridView gridView;
     public int[] images = {
-            R.drawable.pape,
-            R.drawable.chat_50,
-            R.drawable.checkmark_52,
-            R.drawable.info_52
+//            R.drawable.pape,
+//            R.drawable.chat_50,
+//            R.drawable.checkmark_52,
+//            R.drawable.info_52
     };
 
     private  View baseView;
@@ -32,12 +32,12 @@ public class ImagesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mBaseView = inflater.inflate(R.layout.fragment_image_delegate, container, false);
+//        mBaseView = inflater.inflate(R.layout.fragment_image_delegate, container, false);
         baseView = inflater.inflate(R.layout.fragment_image, container, false);
         progressBar = (ProgressBar) baseView.findViewById(R.id.progress_bar);
-        gridView = (GridView) mBaseView.findViewById(R.id.gridView);
+//        gridView = (GridView) mBaseView.findViewById(R.id.gridView);
         ImageAdapter imageAdapter = new ImageAdapter();
-        gridView.setAdapter(imageAdapter);
+//        gridView.setAdapter(imageAdapter);
         return mBaseView;
     }
 
@@ -64,7 +64,7 @@ public class ImagesFragment extends Fragment {
             if (convertView == null) {
                 holder = new ViewHolder();
                 LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-                convertView = layoutInflater.inflate(R.layout.image_fragment, parent, false);
+//                convertView = layoutInflater.inflate(R.layout.image_fragment, parent, false);
                 holder.imageView = (ImageView) convertView.findViewById(R.id.image);
                 convertView.setTag(holder);
             } else {
