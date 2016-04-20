@@ -26,14 +26,13 @@ public class RegisterActivity  extends Activity implements View.OnClickListener 
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
         setContentView(R.layout.activity_register);
-//        userNameEdittext = (EditText) findViewById(R.id.username);
-//        emailEditText = (EditText) findViewById(R.id.email);
-//        passwordEditText = (EditText) findViewById(R.id.password);
-//        registerButton = (TextView) findViewById(R.id.register);
-//        loginButton = (TextView) findViewById(R.id.login);
-//        registerButton.setOnClickListener(this);
-//        loginButton.setOnClickListener(this);
-//
+        userNameEdittext = (EditText) findViewById(R.id.username);
+        emailEditText = (EditText) findViewById(R.id.email);
+        passwordEditText = (EditText) findViewById(R.id.password);
+        registerButton = (TextView) findViewById(R.id.register);
+        loginButton = (TextView) findViewById(R.id.login);
+        registerButton.setOnClickListener(this);
+        loginButton.setOnClickListener(this);
     }
 //
     @Override
