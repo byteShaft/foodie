@@ -77,7 +77,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 //                    Intent intent = new Intent(getApplicationContext(), productImageView.getClass());
 //                    intent.putExtra("url", imagesUrls.get((Integer) v.getTag() - 1));
 //                    startActivity(intent);
-                }
+        }
 //            });
     }
 
@@ -122,7 +122,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     }
 
     private void openPictures() {
-        if (Build.VERSION.SDK_INT <19){
+        if (Build.VERSION.SDK_INT < 19) {
             Intent intent = new Intent();
             intent.setType("image/jpeg");
             intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -139,7 +139,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        super.onActivityResult(requestCode, resultCode, data);
         try {
             // When an Image is picked
             if (requestCode == PICK_IMAGE_MULTIPLE && resultCode == MainActivity.RESULT_OK

@@ -42,6 +42,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         getPassword = mPassword.getText().toString();
     }
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -73,6 +74,16 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                try {
+                    JSONObject jsonObject = new JSONObject(data);
+                    System.out.println(jsonObject + "okay");
+                    Helpers.saveDataToSharedPreferences(AppGlobals.KEY_USERNAME,
+                            jsonObject.get("username").toString());
+                    Helpers.saveDataToSharedPreferences(AppGlobals.KEY_PASSWORD, params[1]);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             return data;
@@ -87,6 +98,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 if (jsonObject.get("result").equals("0")) {
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     mProgressBar.setVisibility(View.GONE);
+                    Helpers.userLogin(true);
 
                 } else if (!jsonObject.get("result").equals("0")) {
                     Toast.makeText(getApplicationContext(), "invalid credentials", Toast.LENGTH_SHORT)
