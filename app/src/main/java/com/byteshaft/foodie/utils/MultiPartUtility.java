@@ -1,7 +1,5 @@
 package com.byteshaft.foodie.utils;
 
-import android.util.Base64;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -110,26 +108,26 @@ public class MultiPartUtility {
         return stringBuilder.toString();
     }
 
-//    public byte[] finishFilesUpload() throws IOException {
-//        writer.append(CRLF).append("--").append(boundary).append("--")
-//                    .append(CRLF);
-//        writer.close();
-//        final int status = connection.getResponseCode();
-//        System.out.println(status);
-//        if (registrationProcess && status == 201) {
-//            AppGlobals.setUserExistResponse(status);
-//        }
-//        if (postProductProcess && status == 201 || status == 200) {
-//            AppGlobals.setPostResponse(status);
-//        }
-//        InputStream is = connection.getInputStream();
-//        System.out.println(is.toString());
-//        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//        final byte[] buffer = new byte[4096];
-//        int bytesRead;
-//        while ((bytesRead = is.read(buffer)) != -1) {
-//            bytes.write(buffer, 0, bytesRead);
-//        }
-//        return bytes.toByteArray();
-//    }
+    public byte[] finishFilesUpload() throws IOException {
+        writer.append(CRLF).append("--").append(boundary).append("--")
+                    .append(CRLF);
+        writer.close();
+        final int status = connection.getResponseCode();
+        System.out.println(status);
+        if (registrationProcess && status == 201) {
+
+        }
+        if (postProductProcess && status == 201 || status == 200) {
+
+        }
+        InputStream is = connection.getInputStream();
+        System.out.println(is.toString());
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        final byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer)) != -1) {
+            bytes.write(buffer, 0, bytesRead);
+        }
+        return bytes.toByteArray();
+    }
 }

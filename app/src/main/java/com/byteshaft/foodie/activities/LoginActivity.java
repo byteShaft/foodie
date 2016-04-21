@@ -18,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 
 
 public class LoginActivity extends Activity implements View.OnClickListener {
@@ -71,7 +70,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 try {
                   data =   Helpers.authPostRequest
                           (String.format(
-                                  AppGlobals.BASE_URL+"username="+"%s"+"&password="+"%s", params[0], params[1]));
+                                  AppGlobals.LOGIN_URL +"username="+"%s"+"&password="+"%s", params[0], params[1]));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
