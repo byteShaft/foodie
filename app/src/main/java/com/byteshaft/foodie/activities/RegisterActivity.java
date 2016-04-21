@@ -12,8 +12,9 @@ import android.widget.TextView;
 import com.byteshaft.foodie.R;
 import com.byteshaft.foodie.utils.Helpers;
 
-public class RegisterActivity  extends Activity implements View.OnClickListener {
+public class RegisterActivity extends Activity implements View.OnClickListener {
 
+    private static RegisterActivity instance;
     private EditText userNameEdittext;
     private EditText emailEditText;
     private EditText passwordEditText;
@@ -35,7 +36,8 @@ public class RegisterActivity  extends Activity implements View.OnClickListener 
         registerButton.setOnClickListener(this);
         loginButton.setOnClickListener(this);
     }
-//
+
+    //
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -46,7 +48,7 @@ public class RegisterActivity  extends Activity implements View.OnClickListener 
 
     }
 
-    class RegisterTask extends AsyncTask<String, String , String> {
+    class RegisterTask extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {

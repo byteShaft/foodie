@@ -26,8 +26,9 @@ public class ImagesFragment extends Fragment {
 //            R.drawable.info_52
     };
 
-    private  View baseView;
-    private  ProgressBar progressBar;
+    private View baseView;
+    private ProgressBar progressBar;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -71,7 +72,7 @@ public class ImagesFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            System.out.println( holder.imageView ==null);
+            System.out.println(holder.imageView == null);
             System.out.println(position);
             holder.imageView.setImageResource(images[position]);
             return convertView;

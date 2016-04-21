@@ -65,7 +65,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 //                    Intent intent = new Intent(getApplicationContext(), productImageView.getClass());
 //                    intent.putExtra("url", imagesUrls.get((Integer) v.getTag() - 1));
 //                    startActivity(intent);
-                }
+        }
 //            });
     }
 
@@ -106,7 +106,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     }
 
     private void openPictures() {
-        if (Build.VERSION.SDK_INT <19){
+        if (Build.VERSION.SDK_INT < 19) {
             Intent intent = new Intent();
             intent.setType("image/jpeg");
             intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -122,7 +122,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        super.onActivityResult(requestCode, resultCode, data);
         try {
             // When an Image is picked
             if (requestCode == PICK_IMAGE_MULTIPLE && resultCode == MainActivity.RESULT_OK
@@ -176,23 +176,5 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG)
                     .show();
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == SELECT_PICTURE ) {
-//            System.out.println(data);
-//        }
-//        if (Intent.ACTION_SEND_MULTIPLE.equals(data.getAction())
-//                && data.hasExtra(Intent.EXTRA_STREAM)) {
-//            // retrieve a collection of selected images
-//            ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-//            // iterate over these images
-//            if( list != null ) {
-//                for (Parcelable parcel : list) {
-//                    Uri uri = (Uri) parcel;
-//                    System.out.println(uri);
-//                    System.out.println(data + "selected images");
-//                }
-//            }
-//        }
     }
 }
