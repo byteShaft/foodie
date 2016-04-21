@@ -1,11 +1,14 @@
 package com.byteshaft.foodie.fragments;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,7 +25,13 @@ import android.widget.Toast;
 
 import com.byteshaft.foodie.R;
 import com.byteshaft.foodie.activities.MainActivity;
+import com.byteshaft.foodie.utils.AppGlobals;
+import com.byteshaft.foodie.utils.Helpers;
+import com.byteshaft.foodie.utils.MultiPartUtility;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,16 +41,20 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     private List<String> imagesEncodedList;
 
     private View mBaseView;
-    private Button uploadButton;
+    private Button selectImage;
     private static final int PICK_IMAGE_MULTIPLE = 1;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
+    private Button upload;
+    private ArrayList<Uri> mArrayUri;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBaseView = inflater.inflate(R.layout.fragment_upload, container, false);
-        uploadButton = (Button) mBaseView.findViewById(R.id.upload);
-        uploadButton.setOnClickListener(this);
+        selectImage = (Button) mBaseView.findViewById(R.id.select_image);
+        upload = (Button) mBaseView.findViewById(R.id.upload);
+        upload.setOnClickListener(this);
+        selectImage.setOnClickListener(this);
         return mBaseView;
     }
 
@@ -72,7 +85,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.upload:
+            case R.id.select_image:
                 if (ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -83,6 +96,10 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                     openPictures();
                 }
                 break;
+            case R.id.upload:
+                new UploadTask().execute();
+                break;
+
         }
 
     }
@@ -120,6 +137,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -148,11 +166,17 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                 }else {
                     if (data.getClipData() != null) {
                         ClipData mClipData = data.getClipData();
-                        ArrayList<Uri> mArrayUri = new ArrayList<>();
+                        mArrayUri = new ArrayList<>();
                         for (int i = 0; i < mClipData.getItemCount(); i++) {
 
                             ClipData.Item item = mClipData.getItemAt(i);
                             Uri uri = item.getUri();
+//                            final int takeFlags = data.getFlags()
+//                                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            // Check for the freshest data.
+//                            getActivity().getApplicationContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            System.out.println(getRealPathFromURI(getActivity().getApplicationContext(), uri));
                             mArrayUri.add(uri);
                             // Get the cursor
                             Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, filePathColumn, null, null, null);
@@ -165,7 +189,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                             cursor.close();
 
                         }
-                        Log.v("LOG_TAG", "Selected Images" + mArrayUri.size());
+                        Log.v("LOG_TAG", "Selected Images" + mArrayUri);
                     }
                 }
             } else {
@@ -194,5 +218,38 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 //                }
 //            }
 //        }
+    }
+
+    class UploadTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
+                try {
+                    MultiPartUtility multiPartUtility = new MultiPartUtility(new URL(AppGlobals.SEND_IMAGES_URL));
+                    multiPartUtility.addFilePart("file", new File("sdcard/img1.png"));
+                    String string = multiPartUtility.finish();
+                    System.out.println(string);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+    }
+
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 }
