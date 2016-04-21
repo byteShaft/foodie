@@ -3,7 +3,6 @@ package com.byteshaft.foodie.fragments;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -45,7 +44,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     private static final int PICK_IMAGE_MULTIPLE = 1;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
     private Button upload;
-    private ArrayList<Uri> mArrayUri;
+    private ArrayList<String> mArrayUri;
 
 
     @Override
@@ -176,8 +175,8 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 //                                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                             // Check for the freshest data.
 //                            getActivity().getApplicationContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            System.out.println(getRealPathFromURI(getActivity().getApplicationContext(), uri));
-                            mArrayUri.add(uri);
+//                            System.out.println(getRealPathFromURI(getActivity().getApplicationContext(), uri));
+                            mArrayUri.add(getImagePath(uri));
                             // Get the cursor
                             Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, filePathColumn, null, null, null);
                             // Move to first row
@@ -187,6 +186,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                             imageEncoded  = cursor.getString(columnIndex);
                             imagesEncodedList.add(imageEncoded);
                             cursor.close();
+//                            System.out.println(uri);
 
                         }
                         Log.v("LOG_TAG", "Selected Images" + mArrayUri);
@@ -202,22 +202,6 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == SELECT_PICTURE ) {
-//            System.out.println(data);
-//        }
-//        if (Intent.ACTION_SEND_MULTIPLE.equals(data.getAction())
-//                && data.hasExtra(Intent.EXTRA_STREAM)) {
-//            // retrieve a collection of selected images
-//            ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-//            // iterate over these images
-//            if( list != null ) {
-//                for (Parcelable parcel : list) {
-//                    Uri uri = (Uri) parcel;
-//                    System.out.println(uri);
-//                    System.out.println(data + "selected images");
-//                }
-//            }
-//        }
     }
 
     class UploadTask extends AsyncTask<String, String, String> {
@@ -227,7 +211,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
                 try {
                     MultiPartUtility multiPartUtility = new MultiPartUtility(new URL(AppGlobals.SEND_IMAGES_URL));
-                    multiPartUtility.addFilePart("file", new File("sdcard/img1.png"));
+                    multiPartUtility.addFilePart("file", new File(mArrayUri.get(0)));
                     String string = multiPartUtility.finish();
                     System.out.println(string);
                 } catch (IOException e) {
@@ -238,18 +222,20 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
+    public String getImagePath(Uri uri){
+        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
+        cursor.close();
+
+        cursor = getActivity().getApplicationContext().getContentResolver().query(
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+
+        return path;
     }
 }
