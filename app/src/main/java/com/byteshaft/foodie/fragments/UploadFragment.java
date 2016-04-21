@@ -58,7 +58,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 //                    Intent intent = new Intent(getApplicationContext(), productImageView.getClass());
 //                    intent.putExtra("url", imagesUrls.get((Integer) v.getTag() - 1));
 //                    startActivity(intent);
-                }
+        }
 //            });
     }
 
@@ -99,11 +99,11 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     }
 
     private void openPictures() {
-        if (Build.VERSION.SDK_INT <19){
+        if (Build.VERSION.SDK_INT < 19) {
             Intent intent = new Intent();
             intent.setType("image/jpeg");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "pictures"),SELECT_PICTURE);
+            startActivityForResult(Intent.createChooser(intent, "pictures"), SELECT_PICTURE);
         } else {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -120,7 +120,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             // retrieve a collection of selected images
             ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             // iterate over these images
-            if( list != null ) {
+            if (list != null) {
                 for (Parcelable parcel : list) {
                     Uri uri = (Uri) parcel;
                     System.out.println(uri);
