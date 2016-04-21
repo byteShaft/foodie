@@ -1,12 +1,14 @@
 package com.byteshaft.foodie.fragments;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -19,14 +21,19 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.byteshaft.foodie.R;
+import com.byteshaft.foodie.activities.MainActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UploadFragment extends Fragment implements View.OnClickListener {
 
+    private String imageEncoded;
+    private List<String> imagesEncodedList;
+
     private View mBaseView;
     private Button uploadButton;
-    private static final int SELECT_PICTURE = 1;
+    private static final int PICK_IMAGE_MULTIPLE = 1;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
 
 
@@ -67,7 +74,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.upload:
                 if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.READ_CONTACTS)
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(),
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
@@ -103,29 +110,89 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             Intent intent = new Intent();
             intent.setType("image/jpeg");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "pictures"),SELECT_PICTURE);
+            startActivityForResult(Intent.createChooser(intent, "pictures"),PICK_IMAGE_MULTIPLE);
         } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/jpeg");
-            startActivityForResult(intent, SELECT_PICTURE);
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE_MULTIPLE);
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (Intent.ACTION_SEND_MULTIPLE.equals(data.getAction())
-                && data.hasExtra(Intent.EXTRA_STREAM)) {
-            // retrieve a collection of selected images
-            ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            // iterate over these images
-            if( list != null ) {
-                for (Parcelable parcel : list) {
-                    Uri uri = (Uri) parcel;
-                    System.out.println(uri);
+
+        try {
+            // When an Image is picked
+            if (requestCode == PICK_IMAGE_MULTIPLE && resultCode == MainActivity.RESULT_OK
+                    && null != data) {
+                // Get the Image from data
+
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                imagesEncodedList = new ArrayList<>();
+                if(data.getData()!= null){
+
+                    Uri mImageUri = data.getData();
+
+                    // Get the cursor
+                    Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(mImageUri,
+                            filePathColumn, null, null, null);
+                    // Move to first row
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imageEncoded  = cursor.getString(columnIndex);
+                    cursor.close();
+
+                }else {
+                    if (data.getClipData() != null) {
+                        ClipData mClipData = data.getClipData();
+                        ArrayList<Uri> mArrayUri = new ArrayList<>();
+                        for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                            ClipData.Item item = mClipData.getItemAt(i);
+                            Uri uri = item.getUri();
+                            mArrayUri.add(uri);
+                            // Get the cursor
+                            Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, filePathColumn, null, null, null);
+                            // Move to first row
+                            cursor.moveToFirst();
+
+                            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                            imageEncoded  = cursor.getString(columnIndex);
+                            imagesEncodedList.add(imageEncoded);
+                            cursor.close();
+
+                        }
+                        Log.v("LOG_TAG", "Selected Images" + mArrayUri.size());
+                    }
                 }
+            } else {
+                Toast.makeText(getActivity(), "You haven't picked Image",
+                        Toast.LENGTH_LONG).show();
             }
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG)
+                    .show();
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == SELECT_PICTURE ) {
+//            System.out.println(data);
+//        }
+//        if (Intent.ACTION_SEND_MULTIPLE.equals(data.getAction())
+//                && data.hasExtra(Intent.EXTRA_STREAM)) {
+//            // retrieve a collection of selected images
+//            ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+//            // iterate over these images
+//            if( list != null ) {
+//                for (Parcelable parcel : list) {
+//                    Uri uri = (Uri) parcel;
+//                    System.out.println(uri);
+//                    System.out.println(data + "selected images");
+//                }
+//            }
+//        }
     }
 }
