@@ -6,11 +6,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/upload"
+        android:text="select images"
         android:id="@+id/select_image"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="90dp" />
+        android:layout_marginTop="33dp"
+        android:layout_below="@+id/upload"
+        android:layout_alignLeft="@+id/upload"
+        android:layout_alignStart="@+id/upload" />
 
     <HorizontalScrollView
         android:id="@+id/horizontal_scroll"
@@ -30,10 +31,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="upload"
+        android:text="upload Images"
         android:id="@+id/upload"
+        android:layout_marginTop="190dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="108dp" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
