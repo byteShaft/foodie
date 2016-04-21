@@ -8,10 +8,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.byteshaft.foodie.R;
 import com.byteshaft.foodie.utils.AppGlobals;
 import com.byteshaft.foodie.utils.Helpers;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,12 +47,14 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login_button:
-                new LoginTask().execute();
+                String[] data = {mEmail.getText().toString(), mPassword.getText().toString()};
+                new LoginTask().execute(data);
+                System.out.println("okay");
                 break;
         }
     }
 
-    class LoginTask extends AsyncTask<String, String, Integer> {
+    class LoginTask extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
@@ -58,11 +64,13 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
 
         @Override
-        protected Integer doInBackground(String... params) {
-            int data = 0;
+        protected String doInBackground(String... params) {
+            String data = "";
             if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
                 try {
-                  data =   Helpers.authPostRequest(AppGlobals.BASE_URL, getEmail, getPassword);
+                  data =   Helpers.authPostRequest
+                          (String.format(
+                                  AppGlobals.BASE_URL+"username="+"%s"+"&password="+"%s", params[0], params[1]));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -72,14 +80,26 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(Integer s) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if (s == HttpURLConnection.HTTP_OK) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                mProgressBar.setVisibility(View.GONE);
-                mLogin.setClickable(true);
-            }
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                System.out.println(jsonObject);
+                if (jsonObject.get("result").equals("0")) {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    mProgressBar.setVisibility(View.GONE);
 
+                } else if (!jsonObject.get("result").equals("0")) {
+                    Toast.makeText(getApplicationContext(), "invalid credentials", Toast.LENGTH_SHORT)
+                            .show();
+                    mEmail.setText("");
+                    mPassword.setText("");
+                    mProgressBar.setVisibility(View.GONE);
+                    mLogin.setClickable(true);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -63,14 +63,13 @@ public class Helpers {
         return sharedPreferences.getString(key, "");
     }
 
-    public static int authPostRequest(String link, String key, String value) throws IOException {
+    public static String authPostRequest(String link) throws IOException {
         URL url;
         url = new URL(link);
+        System.out.println(url);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         connection.setRequestMethod("POST");
-        String jsonFormattedData = getJsonObjectString(key, value);
-        sendRequestData(connection, jsonFormattedData);
         System.out.println(connection.getResponseMessage());
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader
                 (connection.getInputStream()));
@@ -79,8 +78,7 @@ public class Helpers {
         while ((line = bufferedReader.readLine()) != null) {
             stringBuilder.append(line).append("\n");
         }
-        System.out.println(stringBuilder.toString());
-        return connection.getResponseCode();
+        return stringBuilder.toString();
     }
 
     public static void sendRequestData(HttpURLConnection connection, String body) throws IOException {
