@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.byteshaft.foodie.R;
 import com.byteshaft.foodie.utils.Helpers;
@@ -18,8 +17,8 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     private EditText userNameEdittext;
     private EditText emailEditText;
     private EditText passwordEditText;
-    private TextView registerButton;
-    private TextView loginButton;
+    private Button registerButton;
+    private Button loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +30,8 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         userNameEdittext = (EditText) findViewById(R.id.username);
         emailEditText = (EditText) findViewById(R.id.email);
         passwordEditText = (EditText) findViewById(R.id.password);
-        registerButton = (TextView) findViewById(R.id.register);
-        loginButton = (TextView) findViewById(R.id.login);
+        registerButton = (Button) findViewById(R.id.register);
+        loginButton = (Button) findViewById(R.id.login);
         registerButton.setOnClickListener(this);
         loginButton.setOnClickListener(this);
     }
