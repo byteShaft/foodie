@@ -210,7 +210,8 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         protected String doInBackground(String... strings) {
             if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
                 try {
-                    MultiPartUtility multiPartUtility = new MultiPartUtility(new URL(AppGlobals.SEND_IMAGES_URL));
+                    MultiPartUtility multiPartUtility =
+                            new MultiPartUtility(new URL(AppGlobals.SEND_IMAGES_URL), "POST");
                     multiPartUtility.addFilePart("file", new File(mArrayUri.get(0)));
                     String string = multiPartUtility.finish();
                     System.out.println(string);
