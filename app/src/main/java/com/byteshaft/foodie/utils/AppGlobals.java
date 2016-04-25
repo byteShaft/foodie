@@ -10,9 +10,19 @@ public class AppGlobals extends Application {
     public static final String USER_LOGIN_KEY = "user_login_key";
     public static final String KEY_USERNAME = "username ";
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_USER_ID = "user_id";
     public static final String BASE_URL = "http://tode.ca/tode_rest_php/";
     public static final String SEND_IMAGES_URL = String.format("%sr_sa_add_food_entry.php", BASE_URL);
     public static final String LOGIN_URL = String.format("%sr_sa_user_select.php?", BASE_URL);
+    public static final String REGISTER_URL = String.format("%sr_sa_registeruser.php", BASE_URL);
+    public static final String NO_INTERNET_TITLE = "Info";
+    public static final String NO_INTERNET_MESSAGE = "Internet not available, Cross check your " +
+            "internet connectivity and try again";
+    public static final String SUCCESS_TITLE = "Success";
+    public static final String SUCCESS_MESSAGE = "Please login with your credentials";
+    public static final String USER_EXIST = "Info";
+    public static final String USER_EXIST_MESSAGE = "User already exist \nPlease select another username";
+    public static boolean sRegisterStatus = false;
 
 
     @Override

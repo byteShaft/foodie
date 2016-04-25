@@ -79,7 +79,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     JSONObject jsonObject = new JSONObject(data);
                     System.out.println(jsonObject + "okay");
                     Helpers.saveDataToSharedPreferences(AppGlobals.KEY_USERNAME,
-                            jsonObject.get("username").toString());
+                            jsonObject.getString("username"));
+                    Helpers.saveDataToSharedPreferences(AppGlobals.KEY_USER_ID,
+                            String.valueOf(jsonObject.getInt("userid")));
                     Helpers.saveDataToSharedPreferences(AppGlobals.KEY_PASSWORD, params[1]);
                 } catch (JSONException e) {
                     e.printStackTrace();
