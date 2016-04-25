@@ -2,15 +2,19 @@ package com.byteshaft.foodie.fragments;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -28,6 +32,10 @@ import com.byteshaft.foodie.utils.AppGlobals;
 import com.byteshaft.foodie.utils.Helpers;
 import com.byteshaft.foodie.utils.MultiPartUtility;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -45,6 +53,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
     private Button upload;
     private ArrayList<String> mArrayUri;
+    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -96,6 +105,10 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.upload:
+                if (mArrayUri.isEmpty()) {
+                    Toast.makeText(getActivity(), "please select image", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 new UploadTask().execute();
                 break;
 
@@ -144,6 +157,8 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             // When an Image is picked
             if (requestCode == PICK_IMAGE_MULTIPLE && resultCode == MainActivity.RESULT_OK
                     && null != data) {
+                mArrayUri = new ArrayList<>();
+                Log.i("TAG", "if part");
                 // Get the Image from data
 
                 String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -151,7 +166,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                 if(data.getData()!= null){
 
                     Uri mImageUri = data.getData();
-
+                    mArrayUri.add(getImagePath(mImageUri));
                     // Get the cursor
                     Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(mImageUri,
                             filePathColumn, null, null, null);
@@ -164,6 +179,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 
                 }else {
                     if (data.getClipData() != null) {
+                        Log.i("TAG", "else part");
                         ClipData mClipData = data.getClipData();
                         mArrayUri = new ArrayList<>();
                         for (int i = 0; i < mClipData.getItemCount(); i++) {
@@ -204,22 +220,74 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    class UploadTask extends AsyncTask<String, String, String> {
+    @NonNull
+    private File getFile(Bitmap imageBitmap) {
+
+        Uri tempUri = getImageUri(getActivity().getApplicationContext(), imageBitmap);
+        // CALL THIS METHOD TO GET THE ACTUAL PATH
+        return new File(getRealPathFromURI(tempUri));
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
+
+    class UploadTask extends AsyncTask<String, String, JSONObject> {
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage("Registering...");
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
             if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
                 try {
                     MultiPartUtility multiPartUtility =
                             new MultiPartUtility(new URL(AppGlobals.SEND_IMAGES_URL), "POST");
+                    multiPartUtility.addFormField("userid", Helpers.getStringDataFromSharedPreference(AppGlobals.KEY_USER_ID));
+//                    multiPartUtility.addFormField("comment", "test");
                     multiPartUtility.addFilePart("file", new File(mArrayUri.get(0)));
-                    String string = multiPartUtility.finish();
-                    System.out.println(string);
+                    return new JSONObject(multiPartUtility.finish());
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject s) {
+            super.onPostExecute(s);
+            mProgressDialog.dismiss();
+            Log.i("Response", "" + s);
+            if (s == null) {
+                Helpers.alertDialog(getActivity(), AppGlobals.NO_INTERNET_TITLE,
+                        AppGlobals.NO_INTERNET_MESSAGE, null);
+            } else try {
+                if (s.getInt("result") == 0) {
+                    Toast.makeText(getActivity(), "success", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
