@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byteshaft.foodie.R;
@@ -22,7 +22,7 @@ import java.io.IOException;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
 
-    private TextView mLogin;
+    private Button mLogin;
     private EditText mEmail;
     private EditText mPassword;
     private String getEmail;
@@ -33,7 +33,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mLogin = (TextView) findViewById(R.id.login_button);
+        mLogin = (Button) findViewById(R.id.login_button);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mLogin.setOnClickListener(this);
         mEmail = (EditText) findViewById(R.id.email_login);
@@ -79,7 +79,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     JSONObject jsonObject = new JSONObject(data);
                     System.out.println(jsonObject + "okay");
                     Helpers.saveDataToSharedPreferences(AppGlobals.KEY_USERNAME,
-                            jsonObject.get("username").toString());
+                            jsonObject.getString("username"));
+                    Helpers.saveDataToSharedPreferences(AppGlobals.KEY_USER_ID,
+                            String.valueOf(jsonObject.getInt("userid")));
                     Helpers.saveDataToSharedPreferences(AppGlobals.KEY_PASSWORD, params[1]);
                 } catch (JSONException e) {
                     e.printStackTrace();

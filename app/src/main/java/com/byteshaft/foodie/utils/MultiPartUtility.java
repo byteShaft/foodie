@@ -33,7 +33,7 @@ public class MultiPartUtility {
     private boolean postProductProcess = false;
 
     // Method use for registration
-    public MultiPartUtility(final URL url) throws IOException {
+    public MultiPartUtility(final URL url, String method) throws IOException {
         registrationProcess = true;
         start  = System.currentTimeMillis() % 1000;
         this.url = url;
@@ -41,7 +41,7 @@ public class MultiPartUtility {
         connection = (HttpURLConnection) url.openConnection();
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
-        connection.setRequestMethod("GET");
+        connection.setRequestMethod(method);
         connection.setRequestProperty("Accept-Charset", CHARSET);
         connection.setRequestProperty("Content-Type",
                 "multipart/form-data; boundary=" + boundary);
