@@ -1,7 +1,6 @@
 package com.byteshaft.foodie.activities;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -143,13 +142,13 @@ public class MainActivity extends AppCompatActivity
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SharedPreferences sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+                        SharedPreferences sharedpreferences = Helpers.getPreferenceManager();
                         SharedPreferences.Editor editor = sharedpreferences.edit();
                         editor.clear();
                         editor.commit();
                         closeApplication();
                         if (!Helpers.isUserLoggedIn()) {
-                            startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                             Helpers.userLogin(false);
                         }
 
