@@ -44,9 +44,11 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         loginButton.setOnClickListener(this);
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        MainActivity.getInstance().closeApplication();
     }
 
     public static RegisterActivity getInstance() {
