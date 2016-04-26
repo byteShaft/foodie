@@ -39,7 +39,6 @@
             android:padding="15dp"
             android:hint="Username"
             android:singleLine="true"
-            android:textColor="@color/gray_800"
             android:textSize="14sp"
             android:inputType="textPersonName"
             android:drawablePadding="9dp"/>
@@ -54,7 +53,6 @@
             android:padding="15dp"
             android:hint="Email"
             android:singleLine="true"
-            android:textColor="@color/gray_800"
             android:textSize="14sp"
             android:inputType="textEmailAddress"
             android:drawablePadding="9dp"/>
@@ -68,7 +66,6 @@
             android:layout_marginEnd="10dp"
             android:padding="15dp"
             android:hint="password"
-            android:textColor="@color/gray_800"
             android:textSize="14sp"
             android:singleLine="true"
             android:inputType="textPassword"

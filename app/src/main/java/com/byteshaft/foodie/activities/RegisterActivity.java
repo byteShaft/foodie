@@ -24,9 +24,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Helpers.isUserLoggedIn()) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        }
         setContentView(R.layout.activity_register);
         userNameEdittext = (EditText) findViewById(R.id.username);
         emailEditText = (EditText) findViewById(R.id.email);
@@ -37,12 +34,31 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         loginButton.setOnClickListener(this);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public static RegisterActivity getInstance() {
+        return instance;
+    }
+
+    public void closeApplication() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
+        startActivity(startMain);
+        RegisterActivity.this.finish();
+    }
+
+
     //
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                RegisterActivity.this.finish();
                 break;
         }
 
