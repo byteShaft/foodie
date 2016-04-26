@@ -1,18 +1,14 @@
 package com.byteshaft.foodie.activities;
 
-import android.annotation.TargetApi;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,12 +16,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.byteshaft.foodie.R;
 import com.byteshaft.foodie.fragments.ImagesFragment;
 import com.byteshaft.foodie.fragments.UploadFragment;
-import com.byteshaft.foodie.utils.AppGlobals;
 import com.byteshaft.foodie.utils.Helpers;
 
 public class MainActivity extends AppCompatActivity
@@ -36,8 +30,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
+        if(!Helpers.isUserLoggedIn()) {
+            startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+        }
         setContentView(R.layout.activity_main);
-        loadFragment(new UploadFragment());
+        if (Helpers.isUserLoggedIn()) {
+            loadFragment(new UploadFragment());
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -60,11 +60,16 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-            if (Helpers.isUserLoggedIn()) {
-                closeApplication();
-                Helpers.userLogin(false);
-            }
 
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println(Helpers.isUserLoggedIn());
+        if(!Helpers.isUserLoggedIn()) {
+            startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
         }
     }
 

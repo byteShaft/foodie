@@ -121,4 +121,12 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         super.onPause();
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (AppGlobals.sRegisterStatus) {
+        MainActivity.getInstance().closeApplication();
+        }
+    }
 }
