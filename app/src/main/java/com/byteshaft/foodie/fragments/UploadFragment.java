@@ -48,18 +48,21 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     private List<String> imagesEncodedList;
 
     private View mBaseView;
+    private ProgressDialog mProgressDialog;
+    private ImageView imageView;
     private Button selectImage;
+    private Button upload;
     private static final int PICK_IMAGE_MULTIPLE = 1;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
-    private Button upload;
     private ArrayList<String> mArrayUri;
-    private ProgressDialog mProgressDialog;
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBaseView = inflater.inflate(R.layout.fragment_upload, container, false);
         selectImage = (Button) mBaseView.findViewById(R.id.select_image);
+        imageView = (ImageView) mBaseView.findViewById(R.id.image_view);
         upload = (Button) mBaseView.findViewById(R.id.upload);
         upload.setOnClickListener(this);
         selectImage.setOnClickListener(this);
@@ -167,6 +170,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 
                     Uri mImageUri = data.getData();
                     mArrayUri.add(getImagePath(mImageUri));
+                    imageView.setImageURI(mImageUri);
                     // Get the cursor
                     Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(mImageUri,
                             filePathColumn, null, null, null);
@@ -248,7 +252,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog = new ProgressDialog(getActivity());
-            mProgressDialog.setMessage("Registering...");
+            mProgressDialog.setMessage("uploading...");
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.setCancelable(false);
             mProgressDialog.show();
@@ -283,7 +287,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                         AppGlobals.NO_INTERNET_MESSAGE, null);
             } else try {
                 if (s.getInt("result") == 0) {
-                    Toast.makeText(getActivity(), "success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "image has been uploaded", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
