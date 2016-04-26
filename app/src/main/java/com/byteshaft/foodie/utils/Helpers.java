@@ -1,6 +1,9 @@
 package com.byteshaft.foodie.utils;
 
 
+import android.content.SharedPreferences;
+
+import android.app.ProgressDialog;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,6 +25,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Helpers {
+
+    private static ProgressDialog progressDialog;
 
     private static SharedPreferences getPreferenceManager() {
         return PreferenceManager.getDefaultSharedPreferences(AppGlobals.getContext());
@@ -119,6 +124,22 @@ public class Helpers {
             e.printStackTrace();
         }
         return success;
+    }
+
+    public static void showProgressDialog(Context context, String message) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(message);
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+
+    public static void dismissProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     public static boolean isValidEmail(CharSequence target) {
