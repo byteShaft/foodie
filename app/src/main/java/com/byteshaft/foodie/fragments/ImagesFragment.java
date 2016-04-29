@@ -1,9 +1,7 @@
 package com.byteshaft.foodie.fragments;
 
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.byteshaft.foodie.R;
 
@@ -27,18 +24,13 @@ public class ImagesFragment extends Fragment {
     };
 
     private View baseView;
-    private ProgressBar progressBar;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-//        mBaseView = inflater.inflate(R.layout.fragment_image_delegate, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        mBaseView = inflater.inflate(R.layout.fragment_image, container, false);
         baseView = inflater.inflate(R.layout.fragment_image, container, false);
-        progressBar = (ProgressBar) baseView.findViewById(R.id.progress_bar);
-//        gridView = (GridView) mBaseView.findViewById(R.id.gridView);
-        ImageAdapter imageAdapter = new ImageAdapter();
-//        gridView.setAdapter(imageAdapter);
+        gridView = (GridView) mBaseView.findViewById(R.id.images_grid);
         return mBaseView;
     }
 
@@ -65,8 +57,8 @@ public class ImagesFragment extends Fragment {
             if (convertView == null) {
                 holder = new ViewHolder();
                 LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-//                convertView = layoutInflater.inflate(R.layout.image_fragment, parent, false);
-                holder.imageView = (ImageView) convertView.findViewById(R.id.image);
+                convertView = layoutInflater.inflate(R.layout.single_image_delegate, parent, false);
+                holder.imageView = (ImageView) convertView.findViewById(R.id.single_image);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -84,11 +76,11 @@ public class ImagesFragment extends Fragment {
     }
 
 
-    class GetJsonData extends AsyncTask<String, String, String> {
+    class GetImagesTask extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
+//            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -99,7 +91,7 @@ public class ImagesFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            progressBar.setVisibility(View.INVISIBLE);
+//            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 }
