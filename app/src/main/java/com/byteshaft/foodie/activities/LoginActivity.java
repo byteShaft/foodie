@@ -68,9 +68,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             String data = "";
             if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
                 try {
-                  data =   Helpers.authPostRequest
+                  data =   Helpers.connectionRequest
                           (String.format(
-                                  AppGlobals.LOGIN_URL +"username="+"%s"+"&password="+"%s", params[0], params[1]));
+                                  AppGlobals.LOGIN_URL +"username="+"%s"+"&password="+"%s",
+                                  params[0], params[1]), "POST");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -72,13 +72,13 @@ public class Helpers {
         return sharedPreferences.getString(key, "");
     }
 
-    public static String authPostRequest(String link) throws IOException {
+    public static String connectionRequest(String link, String method) throws IOException {
         URL url;
         url = new URL(link);
         System.out.println(url);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod(method);
         System.out.println(connection.getResponseMessage());
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader
                 (connection.getInputStream()));

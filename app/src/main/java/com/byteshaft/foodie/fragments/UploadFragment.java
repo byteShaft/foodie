@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -44,16 +45,15 @@ import java.util.List;
 
 public class UploadFragment extends Fragment implements View.OnClickListener {
 
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
+    private static final int PICK_IMAGE_MULTIPLE = 1;
     private String imageEncoded;
     private List<String> imagesEncodedList;
-
     private View mBaseView;
     private ProgressDialog mProgressDialog;
     private ImageView imageView;
     private Button selectImage;
     private Button upload;
-    private static final int PICK_IMAGE_MULTIPLE = 1;
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
     private ArrayList<String> mArrayUri;
 
 
@@ -108,11 +108,14 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.upload:
-                if (mArrayUri.isEmpty()) {
+                if (mArrayUri == null) {
                     Toast.makeText(getActivity(), "please select image", Toast.LENGTH_SHORT).show();
                     return;
+                } else {
+                    if (!mArrayUri.isEmpty()) {
+                        new UploadTask().execute();
+                    }
                 }
-                new UploadTask().execute();
                 break;
 
         }
@@ -170,7 +173,9 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 
                     Uri mImageUri = data.getData();
                     mArrayUri.add(getImagePath(mImageUri));
-                    imageView.setImageURI(mImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeFile(getImagePath(mImageUri));
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setBackground(getResources().getDrawable(R.drawable.border_image));
                     // Get the cursor
                     Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(mImageUri,
                             filePathColumn, null, null, null);
@@ -246,6 +251,23 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         return cursor.getString(idx);
     }
 
+    public String getImagePath(Uri uri){
+        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
+        cursor.close();
+
+        cursor = getActivity().getApplicationContext().getContentResolver().query(
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+
+        return path;
+    }
+
     class UploadTask extends AsyncTask<String, String, JSONObject> {
 
         @Override
@@ -287,28 +309,12 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                         AppGlobals.NO_INTERNET_MESSAGE, null);
             } else try {
                 if (s.getInt("result") == 0) {
+                    imageView.setImageResource(android.R.drawable.ic_menu_gallery);
                     Toast.makeText(getActivity(), "image has been uploaded", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public String getImagePath(Uri uri){
-        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        String document_id = cursor.getString(0);
-        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
-        cursor.close();
-
-        cursor = getActivity().getApplicationContext().getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
-
-        return path;
     }
 }
