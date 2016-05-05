@@ -46,8 +46,6 @@
             android:textCursorDrawable="@null"
             android:inputType="textEmailAddress"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/username"
-            android:drawableStart="@drawable/username"
             android:drawablePadding="9dp"/>
 
         <EditText
@@ -65,16 +63,16 @@
             android:singleLine="true"
             android:inputType="textPassword"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/password"
-            android:drawableStart="@drawable/password"
             android:drawablePadding="9dp"/>
 
         <Button
             android:id="@+id/login_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:padding="15dp"
             android:gravity="center"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
@@ -82,7 +80,8 @@
             android:textStyle="bold"
             android:textSize="17sp"
             android:text="Login"
-            android:background="@drawable/button_effect" />
+            android:background="@drawable/button_effect"
+            android:layout_gravity="center_horizontal" />
 
         <ProgressBar
             android:layout_width="50dp"

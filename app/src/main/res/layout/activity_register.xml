@@ -43,8 +43,6 @@
             android:singleLine="true"
             android:textSize="14sp"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/username"
-            android:drawableStart="@drawable/username"
             android:inputType="textPersonName"
             android:drawablePadding="9dp"/>
 
@@ -62,8 +60,6 @@
             android:singleLine="true"
             android:textSize="14sp"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/email"
-            android:drawableStart="@drawable/email"
             android:inputType="textEmailAddress"
             android:drawablePadding="9dp"/>
 
@@ -82,16 +78,14 @@
             android:singleLine="true"
             android:inputType="textPassword"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/password"
-            android:drawableStart="@drawable/password"
             android:drawablePadding="9dp"/>
 
         <Button
             android:id="@+id/register"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:padding="10dp"
+            android:padding="15dp"
             android:background="@drawable/button_effect"
             android:gravity="center"
             android:layout_marginStart="10dp"
@@ -99,14 +93,15 @@
             android:textAllCaps="true"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Register" />
+            android:text="Register"
+            android:layout_gravity="center_horizontal" />
 
         <Button
             android:id="@+id/login"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:padding="10dp"
+            android:padding="15dp"
             android:gravity="center"
             android:background="@drawable/button_effect"
             android:layout_marginStart="10dp"
@@ -114,7 +109,8 @@
             android:textAllCaps="true"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Login" />
+            android:text="Login"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -44,18 +45,16 @@ import java.util.List;
 
 public class UploadFragment extends Fragment implements View.OnClickListener {
 
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
+    private static final int PICK_IMAGE_MULTIPLE = 1;
     private String imageEncoded;
     private List<String> imagesEncodedList;
-
     private View mBaseView;
     private ProgressDialog mProgressDialog;
     private ImageView imageView;
     private Button selectImage;
     private Button upload;
-    private static final int PICK_IMAGE_MULTIPLE = 1;
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0;
     private ArrayList<String> mArrayUri;
-
 
 
     @Override
@@ -108,11 +107,14 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.upload:
-                if (mArrayUri.isEmpty()) {
+                if (mArrayUri == null) {
                     Toast.makeText(getActivity(), "please select image", Toast.LENGTH_SHORT).show();
                     return;
+                } else {
+                    if (!mArrayUri.isEmpty()) {
+                        new UploadTask().execute();
+                    }
                 }
-                new UploadTask().execute();
                 break;
 
         }
@@ -142,13 +144,13 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             Intent intent = new Intent();
             intent.setType("image/jpeg");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "pictures"),PICK_IMAGE_MULTIPLE);
+            startActivityForResult(Intent.createChooser(intent, "pictures"), PICK_IMAGE_MULTIPLE);
         } else {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE_MULTIPLE);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_MULTIPLE);
         }
     }
 
@@ -164,13 +166,15 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                 Log.i("TAG", "if part");
                 // Get the Image from data
 
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 imagesEncodedList = new ArrayList<>();
-                if(data.getData()!= null){
+                if (data.getData() != null) {
 
                     Uri mImageUri = data.getData();
                     mArrayUri.add(getImagePath(mImageUri));
-                    imageView.setImageURI(mImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeFile(getImagePath(mImageUri));
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setBackground(getResources().getDrawable(R.drawable.border_image));
                     // Get the cursor
                     Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(mImageUri,
                             filePathColumn, null, null, null);
@@ -178,10 +182,10 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    imageEncoded  = cursor.getString(columnIndex);
+                    imageEncoded = cursor.getString(columnIndex);
                     cursor.close();
 
-                }else {
+                } else {
                     if (data.getClipData() != null) {
                         Log.i("TAG", "else part");
                         ClipData mClipData = data.getClipData();
@@ -203,7 +207,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                             cursor.moveToFirst();
 
                             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                            imageEncoded  = cursor.getString(columnIndex);
+                            imageEncoded = cursor.getString(columnIndex);
                             imagesEncodedList.add(imageEncoded);
                             cursor.close();
 //                            System.out.println(uri);
@@ -231,6 +235,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         // CALL THIS METHOD TO GET THE ACTUAL PATH
         return new File(getRealPathFromURI(tempUri));
     }
+
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -246,7 +251,26 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         return cursor.getString(idx);
     }
 
+    public String getImagePath(Uri uri) {
+        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id = document_id.substring(document_id.lastIndexOf(":") + 1);
+        cursor.close();
+
+        cursor = getActivity().getApplicationContext().getContentResolver().query(
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+
+        return path;
+    }
+
     class UploadTask extends AsyncTask<String, String, JSONObject> {
+
+        private boolean internetAvailable = false;
 
         @Override
         protected void onPreExecute() {
@@ -261,16 +285,16 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         @Override
         protected JSONObject doInBackground(String... strings) {
             if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
+                internetAvailable = true;
                 try {
                     MultiPartUtility multiPartUtility =
                             new MultiPartUtility(new URL(AppGlobals.SEND_IMAGES_URL), "POST");
-                    multiPartUtility.addFormField("userid", Helpers.getStringDataFromSharedPreference(AppGlobals.KEY_USER_ID));
-//                    multiPartUtility.addFormField("comment", "test");
+                    multiPartUtility.addFormField("userid",
+                            Helpers.getStringDataFromSharedPreference(AppGlobals.KEY_USER_ID));
+                    multiPartUtility.addFormField("comment", "test");
                     multiPartUtility.addFilePart("file", new File(mArrayUri.get(0)));
                     return new JSONObject(multiPartUtility.finish());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -281,34 +305,19 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         protected void onPostExecute(JSONObject s) {
             super.onPostExecute(s);
             mProgressDialog.dismiss();
-            Log.i("Response", "" + s);
-            if (s == null) {
-                Helpers.alertDialog(getActivity(), AppGlobals.NO_INTERNET_TITLE,
-                        AppGlobals.NO_INTERNET_MESSAGE, null);
-            } else try {
-                if (s.getInt("result") == 0) {
+            try {
+                if (!internetAvailable || s == null || s.getInt("result") == 0) {
+                    imageView.setImageResource(android.R.drawable.ic_menu_gallery);
                     Toast.makeText(getActivity(), "image has been uploaded", Toast.LENGTH_SHORT).show();
-                }
+                } else
+                    if (s.getInt("result") == 0) {
+                        imageView.setImageResource(android.R.drawable.ic_menu_gallery);
+                        Toast.makeText(getActivity(), "image has been uploaded", Toast.LENGTH_SHORT).show();
+                    }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            Log.i("Response", "" + s);
         }
-    }
-
-    public String getImagePath(Uri uri){
-        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        String document_id = cursor.getString(0);
-        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
-        cursor.close();
-
-        cursor = getActivity().getApplicationContext().getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
-
-        return path;
     }
 }

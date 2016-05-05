@@ -23,6 +23,9 @@ public class AppGlobals extends Application {
     public static final String USER_EXIST = "Info";
     public static final String USER_EXIST_MESSAGE = "User already exist \nPlease select another username";
     public static boolean sRegisterStatus = false;
+    public static final String GET_IMAGES_URL = "http://tode.ca/tode_rest_php" +
+            "/r_sa_show_food_entries.php?userid=";
+    public static final String IMAGES_LOCATION = "http://tode.ca/tode_rest_php/food_uploads/";
 
 
     @Override

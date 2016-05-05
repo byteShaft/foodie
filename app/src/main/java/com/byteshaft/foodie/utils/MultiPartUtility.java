@@ -37,6 +37,7 @@ public class MultiPartUtility {
         registrationProcess = true;
         start  = System.currentTimeMillis() % 1000;
         this.url = url;
+        System.out.println(url);
         boundary = "---------------------------" + System.currentTimeMillis() % 1000;
         connection = (HttpURLConnection) url.openConnection();
         connection.setConnectTimeout(CONNECT_TIMEOUT);
@@ -100,11 +101,12 @@ public class MultiPartUtility {
         System.out.println(status);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader
                 (connection.getInputStream()));
-        String line = "";
+        String line;
         StringBuilder stringBuilder = new StringBuilder();
         while ((line = bufferedReader.readLine()) != null) {
             stringBuilder.append(line).append("\n");
         }
+        System.out.println(stringBuilder.toString());
         return stringBuilder.toString();
     }
 
