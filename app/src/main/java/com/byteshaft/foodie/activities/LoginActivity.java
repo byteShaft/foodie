@@ -47,9 +47,17 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login_button:
-                String[] data = {mEmail.getText().toString(), mPassword.getText().toString()};
-                new LoginTask().execute(data);
-                System.out.println("okay");
+                if (mEmail.getText().toString().trim().isEmpty() &&
+                        mPassword.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(LoginActivity.this, "All fields must be filled",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+                if (!mEmail.getText().toString().trim().isEmpty() &&
+                        !mPassword.getText().toString().trim().isEmpty()) {
+                    String[] data = {mEmail.getText().toString(), mPassword.getText().toString()};
+                    new LoginTask().execute(data);
+                }
                 break;
         }
     }

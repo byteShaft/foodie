@@ -43,8 +43,6 @@
             android:singleLine="true"
             android:textSize="14sp"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/username"
-            android:drawableStart="@drawable/username"
             android:inputType="textPersonName"
             android:drawablePadding="9dp"/>
 
@@ -62,8 +60,6 @@
             android:singleLine="true"
             android:textSize="14sp"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/email"
-            android:drawableStart="@drawable/email"
             android:inputType="textEmailAddress"
             android:drawablePadding="9dp"/>
 
@@ -82,8 +78,6 @@
             android:singleLine="true"
             android:inputType="textPassword"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/password"
-            android:drawableStart="@drawable/password"
             android:drawablePadding="9dp"/>
 
         <Button

@@ -57,7 +57,6 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     private ArrayList<String> mArrayUri;
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBaseView = inflater.inflate(R.layout.fragment_upload, container, false);
@@ -145,13 +144,13 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             Intent intent = new Intent();
             intent.setType("image/jpeg");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "pictures"),PICK_IMAGE_MULTIPLE);
+            startActivityForResult(Intent.createChooser(intent, "pictures"), PICK_IMAGE_MULTIPLE);
         } else {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMAGE_MULTIPLE);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_MULTIPLE);
         }
     }
 
@@ -167,9 +166,9 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                 Log.i("TAG", "if part");
                 // Get the Image from data
 
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
                 imagesEncodedList = new ArrayList<>();
-                if(data.getData()!= null){
+                if (data.getData() != null) {
 
                     Uri mImageUri = data.getData();
                     mArrayUri.add(getImagePath(mImageUri));
@@ -183,10 +182,10 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    imageEncoded  = cursor.getString(columnIndex);
+                    imageEncoded = cursor.getString(columnIndex);
                     cursor.close();
 
-                }else {
+                } else {
                     if (data.getClipData() != null) {
                         Log.i("TAG", "else part");
                         ClipData mClipData = data.getClipData();
@@ -208,7 +207,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                             cursor.moveToFirst();
 
                             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                            imageEncoded  = cursor.getString(columnIndex);
+                            imageEncoded = cursor.getString(columnIndex);
                             imagesEncodedList.add(imageEncoded);
                             cursor.close();
 //                            System.out.println(uri);
@@ -236,6 +235,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         // CALL THIS METHOD TO GET THE ACTUAL PATH
         return new File(getRealPathFromURI(tempUri));
     }
+
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -251,11 +251,11 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         return cursor.getString(idx);
     }
 
-    public String getImagePath(Uri uri){
+    public String getImagePath(Uri uri) {
         Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
         String document_id = cursor.getString(0);
-        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
+        document_id = document_id.substring(document_id.lastIndexOf(":") + 1);
         cursor.close();
 
         cursor = getActivity().getApplicationContext().getContentResolver().query(
@@ -270,6 +270,8 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
 
     class UploadTask extends AsyncTask<String, String, JSONObject> {
 
+        private boolean internetAvailable = false;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -283,16 +285,16 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         @Override
         protected JSONObject doInBackground(String... strings) {
             if (Helpers.isNetworkAvailable() && Helpers.isInternetWorking()) {
+                internetAvailable = true;
                 try {
                     MultiPartUtility multiPartUtility =
                             new MultiPartUtility(new URL(AppGlobals.SEND_IMAGES_URL), "POST");
-                    multiPartUtility.addFormField("userid", Helpers.getStringDataFromSharedPreference(AppGlobals.KEY_USER_ID));
-//                    multiPartUtility.addFormField("comment", "test");
+                    multiPartUtility.addFormField("userid",
+                            Helpers.getStringDataFromSharedPreference(AppGlobals.KEY_USER_ID));
+                    multiPartUtility.addFormField("comment", "test");
                     multiPartUtility.addFilePart("file", new File(mArrayUri.get(0)));
                     return new JSONObject(multiPartUtility.finish());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -303,18 +305,19 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         protected void onPostExecute(JSONObject s) {
             super.onPostExecute(s);
             mProgressDialog.dismiss();
-            Log.i("Response", "" + s);
-            if (s == null) {
-                Helpers.alertDialog(getActivity(), AppGlobals.NO_INTERNET_TITLE,
-                        AppGlobals.NO_INTERNET_MESSAGE, null);
-            } else try {
-                if (s.getInt("result") == 0) {
+            try {
+                if (!internetAvailable || s == null || s.getInt("result") == 0) {
                     imageView.setImageResource(android.R.drawable.ic_menu_gallery);
                     Toast.makeText(getActivity(), "image has been uploaded", Toast.LENGTH_SHORT).show();
-                }
+                } else
+                    if (s.getInt("result") == 0) {
+                        imageView.setImageResource(android.R.drawable.ic_menu_gallery);
+                        Toast.makeText(getActivity(), "image has been uploaded", Toast.LENGTH_SHORT).show();
+                    }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            Log.i("Response", "" + s);
         }
     }
 }

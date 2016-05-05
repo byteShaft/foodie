@@ -46,8 +46,6 @@
             android:textCursorDrawable="@null"
             android:inputType="textEmailAddress"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/username"
-            android:drawableStart="@drawable/username"
             android:drawablePadding="9dp"/>
 
         <EditText
@@ -65,8 +63,6 @@
             android:singleLine="true"
             android:inputType="textPassword"
             android:background="@drawable/edt_bg"
-            android:drawableLeft="@drawable/password"
-            android:drawableStart="@drawable/password"
             android:drawablePadding="9dp"/>
 
         <Button
@@ -74,6 +70,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:padding="15dp"
             android:gravity="center"
             android:layout_marginStart="10dp"

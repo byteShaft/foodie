@@ -28,14 +28,7 @@ public class ImagesFragment extends Fragment {
 
     private View mBaseView;
     private GridView gridView;
-    public int[] images = {
-//            R.drawable.pape,
-//            R.drawable.chat_50,
-//            R.drawable.checkmark_52,
-//            R.drawable.info_52
-    };
     private ProgressDialog mProgressDialog;
-
     private View baseView;
     private ArrayList<String> imagesArrayList;
 
@@ -144,11 +137,11 @@ public class ImagesFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<String> s) {
             super.onPostExecute(s);
+            mProgressDialog.dismiss();
             if (!internetAvailability) {
                 Helpers.alertDialog(getActivity(), AppGlobals.NO_INTERNET_TITLE,
                         AppGlobals.NO_INTERNET_MESSAGE, null);
             } else {
-                mProgressDialog.dismiss();
                 ImageAdapter imageAdapter = new ImageAdapter(s);
                 gridView.setAdapter(imageAdapter);
             }
